@@ -111,6 +111,7 @@ class Platform(str, Enum):
     GenericSerial = "GenericSerial"
     Navigator = "navigator"
     Navigator64 = "navigator64"
+    ROS = "ros"
     Argonot = "argonot"
     SITL = get_sitl_platform_name(machine())
 
@@ -125,6 +126,7 @@ class Platform(str, Enum):
             Platform.GenericSerial: PlatformType.Serial,
             Platform.Navigator: PlatformType.Linux,
             Platform.Navigator64: PlatformType.Linux,
+            Platform.ROS: PlatformType.Linux,
             Platform.Argonot: PlatformType.Linux,
             Platform.SITL: PlatformType.SITL,
         }
