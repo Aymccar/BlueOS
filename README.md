@@ -106,3 +106,6 @@ When restarting the development environment you may need to remove the volumes t
 ```bash
 docker compose -f core/compose/compose.yml down
 ```
+
+## Fork
+This fork is made to support a custom implementation of ROS in ardupilot. The objectif is to publish exactly what ardupilot is doing on ROS topics by defining custom librairies (motors, light, ...). You can found the fork of ardupilot at: https://github.com/Aymccar/ardupilot/ on **ros** branch.
