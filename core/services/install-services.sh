@@ -34,11 +34,11 @@ SERVICES=(
 )
 
 # We need to install loguru, appdirs and pydantic since they may be used inside setup.py
-python -m pip install appdirs==1.4.4 loguru==0.5.3 pydantic==1.10.12
+python -m pip install appdirs==1.4.4 loguru==0.5.3 pydantic==1.10.12 --break-system-packages
 
 for SERVICE in "${SERVICES[@]}"; do
     echo "Installing service: $SERVICE"
-    cd "/home/pi/services/$SERVICE/" && pip3 install .
+    cd "/home/pi/services/$SERVICE/" && pip3 install . --break-system-packages
 done
 
 apt -y remove ${BUILD_PACKAGES[*]}

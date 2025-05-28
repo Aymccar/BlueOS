@@ -1,5 +1,6 @@
 # Build frontend
 FROM --platform=$BUILDPLATFORM oven/bun:1.0.3-slim AS frontend-builder
+#SHELL ["/bin/bash", "-c"]
 
 ARG VITE_APP_GIT_DESCRIBE
 ENV VITE_APP_GIT_DESCRIBE=${VITE_APP_GIT_DESCRIBE:-none/none-0-g00000000}
@@ -23,7 +24,7 @@ set -e
 
 EOF
 
-FROM bluerobotics/blueos-base:0.2.1 AS base
+FROM ros-blueos-base AS base
 
 # Download binaries
 FROM base AS download-binaries
@@ -101,7 +102,7 @@ set -e
     ## When running, the .config folder in the docker is not accessible,
     ## since it gets shadowed by the host's `.config` folder.
     ## If the folder tree contains any files during the build step, it means we put it here by mistake.
-    [ -z "$(find '/root/.config' -mindepth 1 -type f)" ]
+    #[ -z "$(find '/root/.config' -mindepth 1 -type f)" ]
 
     # Update blueosrc with the necessary environment variables
     RCFILE_PATH="/etc/blueosrc"
@@ -120,7 +121,7 @@ set -e
     ln -s / /shortcuts/system_root
 
     # Setup user
-    useradd -m -u 1000 -G dialout blueos
+    useradd -m -u 1010 -G dialout blueos
 
     # Remove /etc/dhcpcd.conf if it exists inside the docker
     # This is to prevent an awkward behavior where docker doesnt find the file
@@ -130,6 +131,20 @@ set -e
     rm -f /etc/dhcpcd.conf
 
 EOF
+
+# Install ROS jazzy
+RUN <<-EOF
+apt install software-properties-common -y
+add-apt-repository universe
+apt update && apt install curl -y
+curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(. /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null  
+apt update
+apt upgrade
+apt install ros-jazzy-ros-base ros-jazzy-rmw-cyclonedds-cpp -y
+EOF
+
+RUN /home/pi/tools/wafros2bridge.sh
 
 # Start
 CMD ["/bin/bash", "-i", "-c", "/usr/bin/start-blueos-core && sleep infinity"]

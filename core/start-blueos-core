@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# source ros 
+source /opt/ros/jazzy/setup.bash
+echo "ROS sourced"
+
 # Immediately exit on errors
 set -e
 
